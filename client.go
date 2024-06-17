@@ -258,13 +258,18 @@ func (c *HelmClient) ListReleasesByStateMask(states action.ListStates) ([]*relea
 }
 
 // GetReleaseValues returns the (optionally, all computed) values for the specified release.
-func (c *HelmClient) GetReleaseValues(name string, allValues bool) (map[string]interface{}, error) {
-	return c.getReleaseValues(name, allValues)
+func (c *HelmClient) GetReleaseValues(name string, allValues bool, version int) (map[string]interface{}, error) {
+	return c.getReleaseValues(name, allValues, version)
 }
 
 // GetRelease returns a release specified by name.
 func (c *HelmClient) GetRelease(name string) (*release.Release, error) {
 	return c.getRelease(name)
+}
+
+// ReleaseStatus returns a release and it's status matching the provided 'name'.
+func (c *HelmClient) ReleaseStatus(name string, showResources bool, version int) (*release.Release, error) {
+	return c.releaseStatus(name, showResources, version)
 }
 
 // RollbackRelease implicitly rolls back a release to the last revision.
@@ -407,7 +412,7 @@ func (c *HelmClient) upgrade(ctx context.Context, spec *ChartSpec, opts *Generic
 			}
 		}
 		c.DebugLog("release upgrade failed: %s", resultErr)
-		return nil, resultErr
+		return upgradedRelease, resultErr
 	}
 
 	c.DebugLog("release upgraded successfully: %s/%s-%s", upgradedRelease.Name, upgradedRelease.Chart.Metadata.Name, upgradedRelease.Chart.Metadata.Version)
@@ -825,10 +830,12 @@ func (c *HelmClient) listReleases(state action.ListStates) ([]*release.Release, 
 
 // getReleaseValues returns the values for the provided release 'name'.
 // If allValues = true is specified, all computed values are returned.
-func (c *HelmClient) getReleaseValues(name string, allValues bool) (map[string]interface{}, error) {
+// version '0' means the latest reversion.
+func (c *HelmClient) getReleaseValues(name string, allValues bool, version int) (map[string]interface{}, error) {
 	getReleaseValuesClient := action.NewGetValues(c.ActionConfig)
 
 	getReleaseValuesClient.AllValues = allValues
+	getReleaseValuesClient.Version = version
 
 	return getReleaseValuesClient.Run(name)
 }
@@ -838,6 +845,16 @@ func (c *HelmClient) getRelease(name string) (*release.Release, error) {
 	getReleaseClient := action.NewGet(c.ActionConfig)
 
 	return getReleaseClient.Run(name)
+}
+
+// releaseStatus returns a release and it's status matching the provided 'name'.
+// showResources display the resources of the named release.
+// version display the status of the named release with revision.
+func (c *HelmClient) releaseStatus(name string, showResources bool, version int) (*release.Release, error) {
+	releaseStatusClient := action.NewStatus(c.ActionConfig)
+	releaseStatusClient.ShowResources = showResources
+	releaseStatusClient.Version = version
+	return releaseStatusClient.Run(name)
 }
 
 // rollbackRelease implicitly rolls back a release to the last revision.

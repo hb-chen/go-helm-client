@@ -106,18 +106,18 @@ func (mr *MockClientMockRecorder) GetRelease(name any) *gomock.Call {
 }
 
 // GetReleaseValues mocks base method.
-func (m *MockClient) GetReleaseValues(name string, allValues bool) (map[string]any, error) {
+func (m *MockClient) GetReleaseValues(name string, allValues bool, version int) (map[string]any, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetReleaseValues", name, allValues)
+	ret := m.ctrl.Call(m, "GetReleaseValues", name, allValues, version)
 	ret0, _ := ret[0].(map[string]any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetReleaseValues indicates an expected call of GetReleaseValues.
-func (mr *MockClientMockRecorder) GetReleaseValues(name, allValues any) *gomock.Call {
+func (mr *MockClientMockRecorder) GetReleaseValues(name, allValues, version interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleaseValues", reflect.TypeOf((*MockClient)(nil).GetReleaseValues), name, allValues)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleaseValues", reflect.TypeOf((*MockClient)(nil).GetReleaseValues), name, allValues, version)
 }
 
 // GetSettings mocks base method.
@@ -221,6 +221,21 @@ func (m *MockClient) ListReleasesByStateMask(arg0 action.ListStates) ([]*release
 func (mr *MockClientMockRecorder) ListReleasesByStateMask(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListReleasesByStateMask", reflect.TypeOf((*MockClient)(nil).ListReleasesByStateMask), arg0)
+}
+
+// ReleaseStatus mocks base method.
+func (m *MockClient) ReleaseStatus(name string, showResources bool, version int) (*release.Release, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReleaseStatus", name, showResources, version)
+	ret0, _ := ret[0].(*release.Release)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReleaseStatus indicates an expected call of ReleaseStatus.
+func (mr *MockClientMockRecorder) ReleaseStatus(name, showResources, version interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReleaseStatus", reflect.TypeOf((*MockClient)(nil).ReleaseStatus), name, showResources, version)
 }
 
 // RollbackRelease mocks base method.

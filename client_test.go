@@ -317,7 +317,7 @@ func ExampleHelmClient_ListDeployedReleases() {
 
 func ExampleHelmClient_GetReleaseValues() {
 	// Get the values of a deployed release.
-	if _, err := helmClient.GetReleaseValues("etcd-operator", true); err != nil {
+	if _, err := helmClient.GetReleaseValues("etcd-operator", true, 0); err != nil {
 		panic(err)
 	}
 }
@@ -325,6 +325,13 @@ func ExampleHelmClient_GetReleaseValues() {
 func ExampleHelmClient_GetRelease() {
 	// Get specific details of a deployed release.
 	if _, err := helmClient.GetRelease("etcd-operator"); err != nil {
+		panic(err)
+	}
+}
+
+func ExampleHelmClient_ReleaseStatus() {
+	// Get specific details of a deployed release.
+	if _, err := helmClient.releaseStatus("etcd-operator", true, 0); err != nil {
 		panic(err)
 	}
 }
